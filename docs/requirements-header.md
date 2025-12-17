@@ -3,7 +3,9 @@
 ## 1. Overview
 
 **Requirement ID: FR-HEADER-001**
+
 Priority: High
+
 Description:
 The Header is a persistent UI component that shall be rendered on all pages (public and private) and adapt its content based on user authentication status.
 
