@@ -136,19 +136,19 @@ The WhyDrinkWater component provides educational content about the health benefi
 
 The WhyDrinkWater component shall contain the following content elements:
 
-- heading:
+1. Heading:
 
-  Text value: Why drink water
+    Text value: Why drink water
 
-- unordered list consisting of seven items with the following text values:
+2. Unordered list consisting of seven items with the following text values:
 
-  1. Supply of nutrients to all organs
-  2. Providing oxygen to the lungs
-  3. Maintaining the work of the heart
-  4. Release of processed substances
-  5. Ensuring the stability of the internal environment
-  6. Maintaining within the normal temperature
-  7. Maintaining an immune system capable of resisting disease
+   - Supply of nutrients to all organs
+   - Providing oxygen to the lungs
+   - Maintaining the work of the heart
+   - Release of processed substances
+   -  Ensuring the stability of the internal environment
+   - Maintaining within the normal temperature
+   - Maintaining an immune system capable of resisting disease
 
 Acceptance Criteria:
 
