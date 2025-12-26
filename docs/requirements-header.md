@@ -69,7 +69,6 @@ When the user clicks the Theme Toggle:
 - From Dark to Light
 
 2. The new theme value shall be saved to localStorage
-   
 3. All UI elements shall reflect the new theme
 
 Acceptance Criteria:
@@ -166,22 +165,25 @@ Description:
 
 When the UserAuth is clicked:
 
-- The user shall be redirected to the SignIn Page (route: /signin)
+- The user shall be redirected to the Sign In Page (route: /signin)
 - The /signin route shall be publicly accessible (no authentication required)
 
 Acceptance Criteria:
 
 1.
+
 - Given the user is unauthenticated
 - When the user views the Header
 - Then the UserAuth element is visible
+
 2.
+
 - Given the user is unauthenticated
 - And the user is on any public page
 - When the user clicks the UserAuth element
 - Then the system redirects the user to the SignIn Page
 - And the route is '/signin'
-- And the SignInPage component is rendered
+- And the Sign In Page component is rendered
 
 ## 4. Header for Authenticated Users
 
@@ -197,7 +199,7 @@ For authenticated users, the Header shall display three components:
 
 - Logo
 - Theme Toggle
-- UserLogo button
+- User Logo button
 
   ![Header auth](../images/header/header-auth.png)
 
@@ -243,7 +245,7 @@ Priority: High
 
 Description:
 
-The UserLogo shall display content according to the following priority order:
+The User Logo shall display content according to the following priority order:
 
 Priority 1: If user has both name and avatar:
 
@@ -263,15 +265,20 @@ Priority 3: If user has neither name nor avatar:
 Acceptance Criteria:
 
 1.
+
 - Given the user is authenticated
 - When the user has an avatar and name
 - Then the UserLogo displays the user's name and avatar image
+
 2.
+
 - Given the user is authenticated
 - When the user has a name but no avatar
 - Then the UserLogo displays the user's name
 - And displays the first letter of the name (uppercase) as a placeholder avatar
+
 3.
+
 - Given the user is authenticated
 - When the user has neither name nor avatar
 - Then the UserLogo displays truncated email as the user's name
@@ -283,29 +290,32 @@ Acceptance Criteria:
 
 Description:
 
-The UserLogo button shall:
+The User Logo button shall:
 
 - Be rendered as a clickable button element
 - Have appropriate hover and focus states for accessibility
 
 Toggle Behavior:
 
-- First click: Opens UserLogo Modal if currently closed
-- Second click: Closes UserLogo Modal if currently open
-- Click outside: Closes UserLogo Modal if open
+- First click: Opens User Logo Modal if currently closed
+- Second click: Closes User Logo Modal if currently open
+- Click outside: Closes User Logo Modal if open
 
 Acceptance Criteria:
 
 1.
+
 - Given the user is authenticated
-- And the UserLogo Modal is closed
-- When the user clicks the UserLogo button
-- Then the UserLogo Modal opens
+- And the User Logo Modal is closed
+- When the user clicks the User Logo button
+- Then the User Logo Modal opens
+
 2.
+
 - Given the user is authenticated
-- And the UserLogo Modal is open
-- When the user clicks the UserLogo button again
-- Then the UserLogo Modal closes
+- And the User Logo Modal is open
+- When the user clicks the User Logo button again
+- Then the User Logo Modal closes
 
 ### 4.4 UserLogo Modal Window
 
@@ -319,7 +329,7 @@ Priority: High
 
 Description:
 
-The UserLogo Modal shall contain two buttons:
+The User Logo Modal shall contain two buttons:
 
 - Settings button - labeled "Settings" with settings icon
 - Logout button - labeled "Log Out" with logout icon
@@ -338,19 +348,24 @@ Logout Button Behavior:
 Acceptance Criteria:
 
 1.
+
 - Given the user is authenticated
-- When the user clicks the UserLogo
+- When the user clicks the User Logo
 - Then the UserLogo Modal opens
+
 2.
+
 - Given the user is authenticated
-- And the UserLogo Modal is open
+- And the User Logo Modal is open
 - When the user clicks the Settings button
 - Then the Settings Modal opens immediately
+
 3.
+
 - Given the user is authenticated
-- And the UserLogo Modal is open
+- And the User Logo Modal is open
 - When the user clicks the Logout button
-- Then the UserLogout Modal opens immediately
+- Then the User Logout Modal opens immediately
 
 #### 4.4.2 Modal Dismissal
 
@@ -358,18 +373,21 @@ Acceptance Criteria:
 
 Description:
 
-The UserLogo Modal shall close when:
+The User Logo Modal shall close when:
 
-- User clicks the UserLogo button again
+- User clicks the User Logo button again
 - User clicks outside the modal area
 
 Acceptance Criteria:
 
 1.
-- Given the UserLogo Modal is open
-- When the user clicks the UserLogo again
-- Then the UserLogo Modal closes
+
+- Given the User Logo Modal is open
+- When the user clicks the User Logo again
+- Then the User Logo Modal closes
+
 2.
-- Given the UserLogo Modal is open
+
+- Given the User Logo Modal is open
 - When the user clicks outside the modal area
-- Then the UserLogo Modal closes
+- Then the User Logo Modal closes
