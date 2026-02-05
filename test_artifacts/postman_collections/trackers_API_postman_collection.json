@@ -1,0 +1,2048 @@
+{
+  "info": {
+    "_postman_id": "99cc48fd-d168-4a13-bb46-ca4c3b0bad3f",
+    "name": "Trackers API",
+    "description": "API collection for water consumption tracking operations.\n\n## Overview\n\nThis collection covers all water tracking endpoints:\n\n- **Add Water** - Record water consumption portions\n    \n- **Update Water** - Modify existing water entries\n    \n- **Delete Water** - Remove water consumption records\n    \n- **Daily Statistics** - Get today's water consumption\n    \n- **Monthly Statistics** - Get monthly water consumption data",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "30918529"
+  },
+  "item": [
+    {
+      "name": "Add Water Portion",
+      "item": [
+        {
+          "name": "Add Water - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test(\"Response contains required root fields\", () => {",
+                  "    pm.expect(responseJson).to.have.property(\"_id\").that.is.a(\"string\");",
+                  "    pm.expect(responseJson).to.have.property(\"waterEntries\").that.is.an(\"array\");",
+                  "    pm.expect(responseJson).to.have.property(\"percentage\").that.is.a(\"number\");",
+                  "});",
+                  "",
+                  "pm.test(\"Percentage is a valid value\", () => {",
+                  "    pm.expect(responseJson.percentage).to.be.within(0, 100);",
+                  "});",
+                  "",
+                  "pm.test(\"Water entry contains required fields\", () => {",
+                  "    const entry = responseJson.waterEntries[0];",
+                  "",
+                  "    pm.expect(entry).to.have.property(\"_id\").that.is.a(\"string\");",
+                  "    pm.expect(entry).to.have.property(\"time\").that.is.a(\"string\");",
+                  "    pm.expect(entry).to.have.property(\"waterVolume\").that.is.a(\"number\");",
+                  "});",
+                  "",
+                  "pm.test(\"Water volume matches request body\", () => {",
+                  "    const entry = responseJson.waterEntries[0];",
+                  "    const requestBody = JSON.parse(pm.request.body.raw);",
+                  "",
+                  "    pm.expect(entry.waterVolume).to.eql(requestBody.waterVolume);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"{{date}}\",\n  \"waterVolume\": {{waterVolume}},\n  \"time\": \"{{time}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C40"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Water - Future Date",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2027-02-20T10:00\",\n  \"waterVolume\": 200,\n  \"time\": \"2027-02-20T10:15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C102"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Water - Past Day",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"2026-01-15T10:00\",\n  \"waterVolume\": 200,\n  \"time\": \"2026-01-15T10:15\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C103"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Water - Negative WaterVolume",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"{{date}}\",\n  \"waterVolume\": -100,\n  \"time\": \"{{time}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C91"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Water - Zero WaterVolume",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"{{date}}\",\n  \"waterVolume\": 0,\n  \"time\": \"{{time}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C92"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Water - Invalid Date Format",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"31-01-2026\",\n  \"waterVolume\": {{waterVolume}},\n  \"time\": \"{{time}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C48"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Water - Missing Date",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"waterVolume\": {{waterVolume}},\n  \"time\": \"{{time}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C47"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Water - Missing Time",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"{{date}}\",\n  \"waterVolume\": {{waterVolume}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C46"
+          },
+          "response": []
+        },
+        {
+          "name": "Add Water - Missing WaterVolume",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"date\": \"{{date}}\",\n  \"time\": \"{{time}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C41"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for adding water consumption portions with various validation scenarios."
+    },
+    {
+      "name": "Update Water Portion",
+      "item": [
+        {
+          "name": "Update Water - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test(\"Response contains required root fields\", () => {",
+                  "    pm.expect(responseJson).to.have.property(\"_id\").that.is.a(\"string\");",
+                  "    pm.expect(responseJson).to.have.property(\"waterEntries\").that.is.an(\"object\");",
+                  "    pm.expect(responseJson).to.have.property(\"percentage\").that.is.a(\"number\");",
+                  "});",
+                  "",
+                  "pm.test(\"Percentage is a valid value\", () => {",
+                  "    pm.expect(responseJson.percentage).to.be.within(0, 100);",
+                  "});",
+                  "",
+                  "pm.test(\"Updated water entry contains required fields\", () => {",
+                  "    const entry = responseJson.waterEntries;",
+                  "",
+                  "    pm.expect(entry).to.have.property(\"_id\").that.is.a(\"string\");",
+                  "    pm.expect(entry).to.have.property(\"time\").that.is.a(\"string\");",
+                  "    pm.expect(entry).to.have.property(\"waterVolume\").that.is.a(\"number\");",
+                  "});",
+                  "",
+                  "pm.test(\"Updated waterVolume matches request body\", () => {",
+                  "    const entry = responseJson.waterEntries;",
+                  "    const requestBody = JSON.parse(pm.request.body.raw);",
+                  "",
+                  "    pm.expect(entry.waterVolume).to.eql(Number(requestBody.waterVolume));",
+                  "});",
+                  "",
+                  "pm.test(\"Updated water entry ID matches request ID\", () => {",
+                  "    const entryIdFromResponse = responseJson.waterEntries._id;",
+                  "    const entryIdFromUrl = pm.request.url.path.slice(-1)[0];",
+                  "",
+                  "    pm.expect(entryIdFromResponse).to.eql(entryIdFromUrl);",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"waterVolume\": 300,\n  \"time\": \"2026-02-02T19:25\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/waterEntries/:idPortion",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "waterEntries",
+                ":idPortion"
+              ],
+              "variable": [
+                {
+                  "key": "idPortion",
+                  "value": "6980bb5add6f3137c361cafd"
+                }
+              ]
+            },
+            "description": "**Test Case:** C44"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Water - Past Day Time",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"waterVolume\": 300,\n  \"time\": \"2026-02-02T19:25\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/waterEntries/:idPortion",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "waterEntries",
+                ":idPortion"
+              ],
+              "variable": [
+                {
+                  "key": "idPortion",
+                  "value": "6980bcf4dd6f3137c361cb10"
+                }
+              ]
+            },
+            "description": "**Test Case:** C100"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Water - Cross-user Data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", () => {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"waterVolume\": 300,\n  \"time\": \"2026-01-31T19:25\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/waterEntries/:idPortion",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "waterEntries",
+                ":idPortion"
+              ],
+              "variable": [
+                {
+                  "key": "idPortion",
+                  "value": "697f3b5cdd6f3137c361ca30"
+                }
+              ]
+            },
+            "description": "**Test Case:** C95"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Water - Invalid ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", () => {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"waterVolume\": 300,\n  \"time\": \"2026-01-31T19:25\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/waterEntries/123456789",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "waterEntries",
+                "123456789"
+              ]
+            },
+            "description": "**Test Case:** C94"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Water - Without Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"waterVolume\": 300,\n  \"time\": \"2026-02-02T19:25\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/waterEntries/:idPortion",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "waterEntries",
+                ":idPortion"
+              ],
+              "variable": [
+                {
+                  "key": "idPortion",
+                  "value": "6980bcf4dd6f3137c361cb10"
+                }
+              ]
+            },
+            "description": "**Test Case:** C93"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Water - Future Time",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"waterVolume\": 300,\n  \"time\": \"2026-02-03T23:25\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/waterEntries/:idPortion",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "waterEntries",
+                ":idPortion"
+              ],
+              "variable": [
+                {
+                  "key": "idPortion",
+                  "value": "6981e856dd6f3137c361cb89"
+                }
+              ]
+            },
+            "description": "**Test Case:** C69"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Water - Invalid Data Type",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"waterVolume\": \"abc\",\n  \"time\": \"2026-01-31T19:25\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/waterEntries/:idPortion",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "waterEntries",
+                ":idPortion"
+              ],
+              "variable": [
+                {
+                  "key": "idPortion",
+                  "value": "6981e856dd6f3137c361cb89"
+                }
+              ]
+            },
+            "description": "**Test Case:** C70"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Water - Negative Value",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"waterVolume\": -300,\n  \"time\": \"2026-02-03T11:25\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/waterEntries/:idPortion",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "waterEntries",
+                ":idPortion"
+              ],
+              "variable": [
+                {
+                  "key": "idPortion",
+                  "value": "6981e856dd6f3137c361cb89"
+                }
+              ]
+            },
+            "description": "**Test Case:** C68"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for updating existing water consumption entries with validation."
+    },
+    {
+      "name": "Delete Water Portion",
+      "item": [
+        {
+          "name": "Delete Water - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test(\"Response contains required root fields\", () => {",
+                  "    pm.expect(responseJson).to.have.property(\"_id\").that.is.a(\"string\");",
+                  "    pm.expect(responseJson).to.have.property(\"waterEntries\").that.is.an(\"object\");",
+                  "    pm.expect(responseJson).to.have.property(\"percentage\").that.is.a(\"number\");",
+                  "});",
+                  "",
+                  "pm.test(\"Percentage is a valid value\", () => {",
+                  "    pm.expect(responseJson.percentage).to.be.within(0, 100);",
+                  "});",
+                  "",
+                  "pm.test(\"Deleted water entry contains required fields\", () => {",
+                  "    const entry = responseJson.waterEntries;",
+                  "",
+                  "    pm.expect(entry).to.have.property(\"_id\").that.is.a(\"string\");",
+                  "    pm.expect(entry).to.have.property(\"time\").that.is.a(\"string\");",
+                  "    pm.expect(entry).to.have.property(\"waterVolume\").that.is.a(\"number\");",
+                  "});",
+                  "",
+                  "pm.test(\"Deleted water entry ID matches request ID\", () => {",
+                  "    const entryIdFromResponse = responseJson.waterEntries._id;",
+                  "    const entryIdFromUrl = pm.request.url.path.slice(-1)[0];",
+                  "",
+                  "    pm.expect(entryIdFromResponse).to.eql(entryIdFromUrl);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/waterEntry/:idPortion",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "waterEntry",
+                ":idPortion"
+              ],
+              "variable": [
+                {
+                  "key": "idPortion",
+                  "value": "698219cedd6f3137c361cc17"
+                }
+              ]
+            },
+            "description": "**Test Case:** C53"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Water - Past Day Entry",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/waterEntry/:idPortion",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "waterEntry",
+                ":idPortion"
+              ],
+              "variable": [
+                {
+                  "key": "idPortion",
+                  "value": "69821a33dd6f3137c361cc40"
+                }
+              ]
+            },
+            "description": "**Test Case:** C101"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Water - Cross-user Data",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", () => {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/waterEntry/:idPortion",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "waterEntry",
+                ":idPortion"
+              ],
+              "variable": [
+                {
+                  "key": "idPortion",
+                  "value": "697f3b5cdd6f3137c361ca30"
+                }
+              ]
+            },
+            "description": "**Test Case:** C97"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Water - Non-existent Entry",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", () => {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/waterEntry/697e6409dd6f3137c361c9b5",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "waterEntry",
+                "697e6409dd6f3137c361c9b5"
+              ]
+            },
+            "description": "**Test Case:** C55"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Water - Without Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/waterEntry/:idPortion",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "waterEntry",
+                ":idPortion"
+              ],
+              "variable": [
+                {
+                  "key": "idPortion",
+                  "value": "697e621fdd6f3137c361c9a0"
+                }
+              ]
+            },
+            "description": "**Test Case:** C54"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Water - Already Removed",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", () => {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/waterEntry/:idPortion",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "waterEntry",
+                ":idPortion"
+              ],
+              "variable": [
+                {
+                  "key": "idPortion",
+                  "value": "698219cedd6f3137c361cc17"
+                }
+              ]
+            },
+            "description": "**Test Case:** C96"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for deleting water consumption entries."
+    },
+    {
+      "name": "Statistics",
+      "item": [
+        {
+          "name": "Get Today's Consumption - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "",
+                  "pm.test(\"Status code is 200 OK\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test(\"Response body is an array\", () => {",
+                  "    pm.expect(responseJson).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "pm.test(\"Today tracker response is correct\", () => {",
+                  "",
+                  "    if (responseJson.length === 0) {",
+                  "        pm.expect(responseJson).to.be.empty;",
+                  "        return;",
+                  "    }",
+                  "",
+                  "    const todayTracker = responseJson[0];",
+                  "",
+                  "    pm.test(\"Today tracker object contains required fields\", () => {",
+                  "        pm.expect(todayTracker).to.have.property(\"_id\").that.is.a(\"string\");",
+                  "        pm.expect(todayTracker).to.have.property(\"dailyWaterNorm\").that.is.a(\"number\");",
+                  "        pm.expect(todayTracker).to.have.property(\"waterEntries\").that.is.a(\"array\");",
+                  "        pm.expect(todayTracker).to.have.property(\"percentage\").that.is.a(\"number\");",
+                  "    });",
+                  "",
+                  "    pm.test(\"Percentage is a valid value\", () => {",
+                  "        pm.expect(todayTracker.percentage).to.be.within(0, 100);",
+                  "    });",
+                  "    todayTracker.waterEntries.forEach(entry => {",
+                  "        pm.expect(entry).to.have.property(\"_id\").that.is.a(\"string\");",
+                  "        pm.expect(entry).to.have.property(\"time\").that.is.a(\"string\");",
+                  "        pm.expect(entry).to.have.property(\"waterVolume\").that.is.a(\"number\");",
+                  "",
+                  "    });",
+                  "",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/today",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "today"
+              ]
+            },
+            "description": "**Test Case:** C66"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Today's Consumption - Without Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/today",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "today"
+              ]
+            },
+            "description": "**Test Case:** C67"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Monthly Statistics - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test(\"Response body is an array\", () => {",
+                  "    pm.expect(responseJson).to.be.an(\"array\");",
+                  "});",
+                  "",
+                  "pm.test(\"Monthly tracker response is correct\", () => {",
+                  "",
+                  "    if (responseJson.length === 0) {",
+                  "        pm.expect(responseJson).to.be.empty;",
+                  "        return;",
+                  "    }",
+                  "",
+                  "    responseJson.forEach(dayStat => {",
+                  "        pm.expect(dayStat).to.have.property(\"date\").that.is.a(\"string\");",
+                  "        pm.expect(dayStat).to.have.property(\"dailyWaterNorm\").that.is.a(\"string\");",
+                  "        pm.expect(dayStat).to.have.property(\"percentage\").that.is.a(\"number\");",
+                  "        pm.expect(dayStat).to.have.property(\"numberOfEntries\").that.is.a(\"number\");",
+                  "",
+                  "        pm.expect(dayStat.percentage).to.be.within(0, 100);",
+                  "    });",
+                  "",
+                  "    });",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/month/:year/:month",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "month",
+                ":year",
+                ":month"
+              ],
+              "variable": [
+                {
+                  "key": "year",
+                  "value": "2026",
+                  "description": "Year (4 digits)"
+                },
+                {
+                  "key": "month",
+                  "value": "2",
+                  "description": "Month (1-12)"
+                }
+              ]
+            },
+            "description": "**Test Case:** C39"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Monthly Statistics - Invalid Year",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/month/:year/:month",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "month",
+                ":year",
+                ":month"
+              ],
+              "variable": [
+                {
+                  "key": "year",
+                  "value": "{{year}}",
+                  "description": "Invalid data"
+                },
+                {
+                  "key": "month",
+                  "value": "2",
+                  "description": "Month (1-12)"
+                }
+              ]
+            },
+            "description": "**Test Case:** C65"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Monthly Statistics - Invalid Month",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/month/:year/:month",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "month",
+                ":year",
+                ":month"
+              ],
+              "variable": [
+                {
+                  "key": "year",
+                  "value": "2026",
+                  "description": "Year (4 digits)"
+                },
+                {
+                  "key": "month",
+                  "value": "{{month}}",
+                  "description": "Invalid data"
+                }
+              ]
+            },
+            "description": "**Test Case:** C98"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Monthly Statistics - Without Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/trackers/month/:year/:month",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "trackers",
+                "month",
+                ":year",
+                ":month"
+              ],
+              "variable": [
+                {
+                  "key": "year",
+                  "value": "2026",
+                  "description": "Year (4 digits)"
+                },
+                {
+                  "key": "month",
+                  "value": "2",
+                  "description": "Month (1-12)"
+                }
+              ]
+            },
+            "description": "**Test Case:** C38"
+          },
+          "response": []
+        }
+      ],
+      "description": "Endpoints for retrieving water consumption statistics (daily and monthly)."
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "date",
+      "value": ""
+    },
+    {
+      "key": "waterVolume",
+      "value": ""
+    },
+    {
+      "key": "time",
+      "value": ""
+    }
+  ]
+}

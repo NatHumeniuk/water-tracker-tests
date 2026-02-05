@@ -1,0 +1,2344 @@
+{
+  "info": {
+    "_postman_id": "5bc2cc24-3239-49de-a9e7-39d092d4b109",
+    "name": "Users API",
+    "description": "API collection for user management including authentication, and profile operations.\n\n## Overview\n\nThis collection covers all user-related endpoints:\n\n- **Authentication** - User registration and email verification, sign in and sign out operations\n    \n- **Profile Management** - Get and update user information",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "30918529"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Signup - Success",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 201 Created\", () => {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "",
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test(\"Response contains user object\", () => {",
+                  "    pm.expect(responseJson).to.have.property(\"user\");",
+                  "});",
+                  "",
+                  "pm.test(\"User object contains required fields\", () => {",
+                  "    const user = responseJson.user;",
+                  "",
+                  "    pm.expect(user).to.have.property(\"username\");",
+                  "    pm.expect(user).to.have.property(\"email\");",
+                  "    pm.expect(user).to.have.property(\"dailyWaterNorm\", 2000);",
+                  "    pm.expect(user).to.have.property(\"weight\", 0);",
+                  "    pm.expect(user).to.have.property(\"sportTime\", 0);",
+                  "});",
+                  "",
+                  "pm.test(\"Email matches registration email\", () => {",
+                  "    const user = responseJson.user;",
+                  "    const requestBody = JSON.parse(pm.request.body.raw);",
+                  "",
+                  "    pm.expect(user.email).to.eql(requestBody.email);",
+                  "});",
+                  "",
+                  "pm.test(\"Username is truncated email before @ symbol\", () => {",
+                  "    const user = responseJson.user;",
+                  "    const emailPrefix = user.email.split(\"@\")[0];",
+                  "",
+                  "    pm.expect(user.username).to.eql(emailPrefix);",
+                  "});",
+                  "",
+                  "",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/signup",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "signup"
+              ]
+            },
+            "description": "**Test Case:** C73"
+          },
+          "response": []
+        },
+        {
+          "name": "Signup - Missing Email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"{{userPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/signup",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "signup"
+              ]
+            },
+            "description": "**Test Case:** C75"
+          },
+          "response": []
+        },
+        {
+          "name": "Signup - Missing Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/signup",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "signup"
+              ]
+            },
+            "description": "**Test Case:** C76"
+          },
+          "response": []
+        },
+        {
+          "name": "Signup - Invalid Email Format",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{invalidUserEmail}}\",\n  \"password\": \"{{userPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/signup",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "signup"
+              ]
+            },
+            "description": "**Test Case:** C77"
+          },
+          "response": []
+        },
+        {
+          "name": "Signup - Email Already Exists",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 409\", () => {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@gmail.com\",\n  \"password\": \"{{userPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/signup",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "signup"
+              ]
+            },
+            "description": "**Test Case:** C78"
+          },
+          "response": []
+        },
+        {
+          "name": "Signup - too Short Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{shortUserPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/signup",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "signup"
+              ]
+            },
+            "description": "**Test Case:** C79"
+          },
+          "response": []
+        },
+        {
+          "name": "Signup - Additional Fields",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{userName}}\",\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/signup",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "signup"
+              ]
+            },
+            "description": "**Test Case:** C80"
+          },
+          "response": []
+        },
+        {
+          "name": "Signin - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test(\"Response contains JWT token\", () => {",
+                  "    pm.expect(responseJson).to.have.property(\"token\");",
+                  "    pm.expect(responseJson.token).to.be.a(\"string\").and.not.empty;",
+                  "});",
+                  "",
+                  "pm.globals.set(\"token\", responseJson.token);",
+                  "",
+                  "pm.test(\"Response contains user object\", () => {",
+                  "    pm.expect(responseJson).to.have.property(\"user\");",
+                  "});",
+                  "",
+                  "pm.test(\"User object contains required fields\", () => {",
+                  "    const user = responseJson.user;",
+                  "",
+                  "    pm.expect(user).to.have.property(\"username\");",
+                  "    pm.expect(user).to.have.property(\"email\");",
+                  "    pm.expect(user).to.have.property(\"dailyWaterNorm\");",
+                  "    pm.expect(user).to.have.property(\"weight\");",
+                  "    pm.expect(user).to.have.property(\"sportTime\");",
+                  "});",
+                  "",
+                  "pm.test(\"Email matches registration email\", () => {",
+                  "    const user = responseJson.user;",
+                  "    const requestBody = JSON.parse(pm.request.body.raw);",
+                  "",
+                  "    pm.expect(user.email).to.eql(requestBody.email);",
+                  "});",
+                  "",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\",\n  \"password\": \"{{userPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/signin",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "signin"
+              ]
+            },
+            "description": "**Test Case:** C58"
+          },
+          "response": []
+        },
+        {
+          "name": "Signin - Empty Email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"\",\n  \"password\": \"{{userPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/signin",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "signin"
+              ]
+            },
+            "description": "**Test Case:** C64"
+          },
+          "response": []
+        },
+        {
+          "name": "Signin - Missing Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/signin",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "signin"
+              ]
+            },
+            "description": "**Test Case:** C60"
+          },
+          "response": []
+        },
+        {
+          "name": "Signin - Missing Email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"password\": \"{{userPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/signin",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "signin"
+              ]
+            },
+            "description": "**Test Case:** C59"
+          },
+          "response": []
+        },
+        {
+          "name": "Signin - Unverified Email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmailSecond}}\",\n  \"password\": \"{{userPasswordSecond}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/signin",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "signin"
+              ]
+            },
+            "description": "**Test Case:** C62"
+          },
+          "response": []
+        },
+        {
+          "name": "Signin - Incorrect Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": {{userEmail}},\n  \"password\": \"incorrect456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/signin",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "signin"
+              ]
+            },
+            "description": "**Test Case:** C61"
+          },
+          "response": []
+        },
+        {
+          "name": "Signin - Invalid Email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nonexist@gmail.com\",\n  \"password\": \"{{userPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/signin",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "signin"
+              ]
+            },
+            "description": "**Test Case:** C63"
+          },
+          "response": []
+        },
+        {
+          "name": "Signout - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/signout",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "signout"
+              ]
+            },
+            "description": "**Test Case:** C71"
+          },
+          "response": []
+        },
+        {
+          "name": "Signout - Invalid Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "invalid.jwt.token",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/signout",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "signout"
+              ]
+            },
+            "description": "**Test Case:** C72"
+          },
+          "response": []
+        }
+      ],
+      "description": "User authentication endpoints including signup, signin, and signout operations."
+    },
+    {
+      "name": "Email Verification",
+      "item": [
+        {
+          "name": "Resend Verification - Success",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/verify/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "verify",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C50"
+          },
+          "response": []
+        },
+        {
+          "name": "Resend Verification - Non-existent Email",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nonexist@gmail.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/verify/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "verify",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C51"
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Email - Success",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/users/verify/:verificationToken",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "verify",
+                ":verificationToken"
+              ],
+              "variable": [
+                {
+                  "key": "verificationToken",
+                  "value": "xH-XUGl_EbVRf4Q8evKzX"
+                }
+              ]
+            },
+            "description": "**Test Case:** C42"
+          },
+          "response": []
+        },
+        {
+          "name": "Resend Verification - Already Verified",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{userEmail}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/verify/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "verify",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C52"
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Email - Invalid Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/users/verify/:invalidVerificationToken",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "verify",
+                ":invalidVerificationToken"
+              ],
+              "variable": [
+                {
+                  "key": "invalidVerificationToken",
+                  "value": "invalidVerificationToken567"
+                }
+              ]
+            },
+            "description": "**Test Case:** C43"
+          },
+          "response": []
+        }
+      ],
+      "description": "Email verification and resend verification endpoints."
+    },
+    {
+      "name": "User Profile",
+      "item": [
+        {
+          "name": "Current User Info- Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test(\"Response contains user object\", () => {",
+                  "    pm.expect(responseJson).to.have.property(\"username\");",
+                  "    pm.expect(responseJson).to.have.property(\"email\");",
+                  "    pm.expect(responseJson).to.have.property(\"gender\");",
+                  "    pm.expect(responseJson).to.have.property(\"dailyWaterNorm\");",
+                  "    pm.expect(responseJson).to.have.property(\"weight\");",
+                  "    pm.expect(responseJson).to.have.property(\"sportTime\");",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/current",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "current"
+              ]
+            },
+            "description": "**Test Case:** C56"
+          },
+          "response": []
+        },
+        {
+          "name": "Current User Info- Missing Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/current",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "current"
+              ]
+            },
+            "description": "**Test Case:** C57"
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Info - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const responseJson = pm.response.json();",
+                  "",
+                  "pm.test(\"Response contains user object\", () => {",
+                  "    pm.expect(responseJson).to.have.property(\"username\", \"UpdatedUsername\");",
+                  "    pm.expect(responseJson).to.have.property(\"gender\", \"Woman\");",
+                  "    pm.expect(responseJson).to.have.property(\"avatarURL\");",
+                  "    pm.expect(responseJson).to.have.property(\"dailyWaterNorm\", \"3000\");",
+                  "    pm.expect(responseJson).to.have.property(\"weight\", \"60\");",
+                  "    pm.expect(responseJson).to.have.property(\"sportTime\", \"2\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "username",
+                  "value": "UpdatedUsername",
+                  "type": "text",
+                  "uuid": "e1baf497-8f53-4b02-ae8b-c71fbcc5d1bd"
+                },
+                {
+                  "key": "email",
+                  "value": "updatedUserEmail@gmail.com",
+                  "type": "text",
+                  "uuid": "fd59cd03-af48-49f0-8833-ccf7452d4dea",
+                  "disabled": true
+                },
+                {
+                  "key": "gender",
+                  "value": "Woman",
+                  "type": "text",
+                  "uuid": "4e053f18-79e3-4719-ad25-22bc2bf24ca0"
+                },
+                {
+                  "key": "dailyWaterNorm",
+                  "value": "3000",
+                  "type": "text",
+                  "uuid": "b416b415-a4b8-4262-b51e-d646e277c191"
+                },
+                {
+                  "key": "weight",
+                  "value": "60",
+                  "type": "text",
+                  "uuid": "d8b79f4f-878a-4495-b8a4-e02861d1d40b"
+                },
+                {
+                  "key": "sportTime",
+                  "value": "2",
+                  "type": "text",
+                  "uuid": "9de0fe3e-e28a-4dea-b78a-d249d64b4e7f"
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "uuid": "9aa4c863-19a7-47c1-9695-4fac197f5e5b",
+                  "src": "postman-cloud:///1f0fc307-5993-4510-bfbf-8fcde5c19c45"
+                },
+                {
+                  "key": "password",
+                  "value": "123456789=!",
+                  "type": "text",
+                  "uuid": "fdabe37f-9eaf-4765-ab96-92cec880ae44",
+                  "disabled": true
+                },
+                {
+                  "key": "passwordNew",
+                  "value": "123123123",
+                  "type": "text",
+                  "uuid": "e12a590c-595e-4fd3-8e2a-5fd693c5b117",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C81"
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Info - Empty Fields",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({",
+                  "    url: \"https://water-tracker-backend-z2wb.onrender.com/api/users/current\",",
+                  "    method: \"GET\",",
+                  "    header: {",
+                  "        Authorization: `Bearer ${pm.globals.get(\"token\")}`",
+                  "    }",
+                  "}, (err, res) => {",
+                  "    if (err) {",
+                  "        console.error(\"Pre-request GET failed\", err);",
+                  "        return;",
+                  "    }",
+                  "",
+                  "    pm.variables.set(\"userBeforeUpdate\", res.text());",
+                  "});",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200 OK\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const userBefore = JSON.parse(pm.variables.get(\"userBeforeUpdate\"));",
+                  "",
+                  "pm.sendRequest({",
+                  "    url: \"https://water-tracker-backend-z2wb.onrender.com/api/users/current\",",
+                  "    method: \"GET\",",
+                  "    header: {",
+                  "        Authorization: `Bearer ${pm.globals.get(\"token\")}`",
+                  "    }",
+                  "}, (err, res) => {",
+                  "    if (err) {",
+                  "        console.error(\"Post-request GET failed\", err);",
+                  "        return;",
+                  "    }",
+                  "",
+                  "    const userAfter = res.json();",
+                  "",
+                  "    pm.test(\"User data did not change after PATCH with empty values\", () => {",
+                  "        pm.expect(userAfter.username).to.eql(userBefore.username);",
+                  "        pm.expect(userAfter.gender).to.eql(userBefore.gender);",
+                  "        pm.expect(userAfter.dailyWaterNorm).to.eql(userBefore.dailyWaterNorm);",
+                  "        pm.expect(userAfter.weight).to.eql(userBefore.weight);",
+                  "        pm.expect(userAfter.sportTime).to.eql(userBefore.sportTime);",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "username",
+                  "value": "",
+                  "type": "text",
+                  "uuid": "e1baf497-8f53-4b02-ae8b-c71fbcc5d1bd"
+                },
+                {
+                  "key": "email",
+                  "value": "updatedUserEmail@gmail.com",
+                  "type": "text",
+                  "uuid": "fd59cd03-af48-49f0-8833-ccf7452d4dea",
+                  "disabled": true
+                },
+                {
+                  "key": "gender",
+                  "value": "",
+                  "type": "text",
+                  "uuid": "4e053f18-79e3-4719-ad25-22bc2bf24ca0"
+                },
+                {
+                  "key": "dailyWaterNorm",
+                  "value": "",
+                  "type": "text",
+                  "uuid": "b416b415-a4b8-4262-b51e-d646e277c191"
+                },
+                {
+                  "key": "weight",
+                  "value": "",
+                  "type": "text",
+                  "uuid": "d8b79f4f-878a-4495-b8a4-e02861d1d40b"
+                },
+                {
+                  "key": "sportTime",
+                  "value": "",
+                  "type": "text",
+                  "uuid": "9de0fe3e-e28a-4dea-b78a-d249d64b4e7f"
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "uuid": "9aa4c863-19a7-47c1-9695-4fac197f5e5b",
+                  "src": "postman-cloud:///1f0fc307-5993-4510-bfbf-8fcde5c19c45",
+                  "disabled": true
+                },
+                {
+                  "key": "password",
+                  "value": "123456789=!",
+                  "type": "text",
+                  "uuid": "fdabe37f-9eaf-4765-ab96-92cec880ae44",
+                  "disabled": true
+                },
+                {
+                  "key": "passwordNew",
+                  "value": "123123123",
+                  "type": "text",
+                  "uuid": "e12a590c-595e-4fd3-8e2a-5fd693c5b117",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C90"
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Info - Existing Email",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 409\", () => {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "username",
+                  "value": "test",
+                  "type": "text",
+                  "uuid": "e1baf497-8f53-4b02-ae8b-c71fbcc5d1bd"
+                },
+                {
+                  "key": "email",
+                  "value": "test@gmail.com",
+                  "type": "text",
+                  "uuid": "fd59cd03-af48-49f0-8833-ccf7452d4dea"
+                },
+                {
+                  "key": "gender",
+                  "value": "Woman",
+                  "type": "text",
+                  "uuid": "4e053f18-79e3-4719-ad25-22bc2bf24ca0",
+                  "disabled": true
+                },
+                {
+                  "key": "dailyWaterNorm",
+                  "value": "3000",
+                  "type": "text",
+                  "uuid": "b416b415-a4b8-4262-b51e-d646e277c191",
+                  "disabled": true
+                },
+                {
+                  "key": "weight",
+                  "value": "60",
+                  "type": "text",
+                  "uuid": "d8b79f4f-878a-4495-b8a4-e02861d1d40b",
+                  "disabled": true
+                },
+                {
+                  "key": "sportTime",
+                  "value": "2",
+                  "type": "text",
+                  "uuid": "9de0fe3e-e28a-4dea-b78a-d249d64b4e7f",
+                  "disabled": true
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "uuid": "9aa4c863-19a7-47c1-9695-4fac197f5e5b",
+                  "src": "postman-cloud:///1f0fc307-5993-4510-bfbf-8fcde5c19c45",
+                  "disabled": true
+                },
+                {
+                  "key": "password",
+                  "value": "123456789=!",
+                  "type": "text",
+                  "uuid": "fdabe37f-9eaf-4765-ab96-92cec880ae44",
+                  "disabled": true
+                },
+                {
+                  "key": "passwordNew",
+                  "value": "123123123",
+                  "type": "text",
+                  "uuid": "e12a590c-595e-4fd3-8e2a-5fd693c5b117",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C89"
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Info - Missing Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "username",
+                  "value": "UpdatedUsername",
+                  "type": "text",
+                  "uuid": "e1baf497-8f53-4b02-ae8b-c71fbcc5d1bd",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "updatedUserEmail@gmail.com",
+                  "type": "text",
+                  "uuid": "fd59cd03-af48-49f0-8833-ccf7452d4dea",
+                  "disabled": true
+                },
+                {
+                  "key": "gender",
+                  "value": "Woman",
+                  "type": "text",
+                  "uuid": "4e053f18-79e3-4719-ad25-22bc2bf24ca0",
+                  "disabled": true
+                },
+                {
+                  "key": "dailyWaterNorm",
+                  "value": "2000",
+                  "type": "text",
+                  "uuid": "b416b415-a4b8-4262-b51e-d646e277c191"
+                },
+                {
+                  "key": "weight",
+                  "value": "60",
+                  "type": "text",
+                  "uuid": "d8b79f4f-878a-4495-b8a4-e02861d1d40b",
+                  "disabled": true
+                },
+                {
+                  "key": "sportTime",
+                  "value": "2",
+                  "type": "text",
+                  "uuid": "9de0fe3e-e28a-4dea-b78a-d249d64b4e7f",
+                  "disabled": true
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "uuid": "9aa4c863-19a7-47c1-9695-4fac197f5e5b",
+                  "src": "postman-cloud:///1f0fc307-5993-4510-bfbf-8fcde5c19c45",
+                  "disabled": true
+                },
+                {
+                  "key": "password",
+                  "value": "123456789=!",
+                  "type": "text",
+                  "uuid": "fdabe37f-9eaf-4765-ab96-92cec880ae44",
+                  "disabled": true
+                },
+                {
+                  "key": "passwordNew",
+                  "value": "123123123",
+                  "type": "text",
+                  "uuid": "e12a590c-595e-4fd3-8e2a-5fd693c5b117",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C86"
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Info - Invalid Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "Invalid.JWT.token",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "username",
+                  "value": "UpdatedUsername",
+                  "type": "text",
+                  "uuid": "e1baf497-8f53-4b02-ae8b-c71fbcc5d1bd",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "updatedUserEmail@gmail.com",
+                  "type": "text",
+                  "uuid": "fd59cd03-af48-49f0-8833-ccf7452d4dea",
+                  "disabled": true
+                },
+                {
+                  "key": "gender",
+                  "value": "Woman",
+                  "type": "text",
+                  "uuid": "4e053f18-79e3-4719-ad25-22bc2bf24ca0",
+                  "disabled": true
+                },
+                {
+                  "key": "dailyWaterNorm",
+                  "value": "2000",
+                  "type": "text",
+                  "uuid": "b416b415-a4b8-4262-b51e-d646e277c191"
+                },
+                {
+                  "key": "weight",
+                  "value": "60",
+                  "type": "text",
+                  "uuid": "d8b79f4f-878a-4495-b8a4-e02861d1d40b",
+                  "disabled": true
+                },
+                {
+                  "key": "sportTime",
+                  "value": "2",
+                  "type": "text",
+                  "uuid": "9de0fe3e-e28a-4dea-b78a-d249d64b4e7f",
+                  "disabled": true
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "uuid": "9aa4c863-19a7-47c1-9695-4fac197f5e5b",
+                  "src": "postman-cloud:///1f0fc307-5993-4510-bfbf-8fcde5c19c45",
+                  "disabled": true
+                },
+                {
+                  "key": "password",
+                  "value": "123456789=!",
+                  "type": "text",
+                  "uuid": "fdabe37f-9eaf-4765-ab96-92cec880ae44",
+                  "disabled": true
+                },
+                {
+                  "key": "passwordNew",
+                  "value": "123123123",
+                  "type": "text",
+                  "uuid": "e12a590c-595e-4fd3-8e2a-5fd693c5b117",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C87"
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Info - Negative Weight",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "username",
+                  "value": "UpdatedUsername",
+                  "type": "text",
+                  "uuid": "e1baf497-8f53-4b02-ae8b-c71fbcc5d1bd",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "updatedUserEmail@gmail.com",
+                  "type": "text",
+                  "uuid": "fd59cd03-af48-49f0-8833-ccf7452d4dea",
+                  "disabled": true
+                },
+                {
+                  "key": "gender",
+                  "value": "Woman",
+                  "type": "text",
+                  "uuid": "4e053f18-79e3-4719-ad25-22bc2bf24ca0",
+                  "disabled": true
+                },
+                {
+                  "key": "dailyWaterNorm",
+                  "value": "3000",
+                  "type": "text",
+                  "uuid": "b416b415-a4b8-4262-b51e-d646e277c191",
+                  "disabled": true
+                },
+                {
+                  "key": "weight",
+                  "value": "-60",
+                  "type": "text",
+                  "uuid": "d8b79f4f-878a-4495-b8a4-e02861d1d40b"
+                },
+                {
+                  "key": "sportTime",
+                  "value": "2",
+                  "type": "text",
+                  "uuid": "9de0fe3e-e28a-4dea-b78a-d249d64b4e7f",
+                  "disabled": true
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "uuid": "9aa4c863-19a7-47c1-9695-4fac197f5e5b",
+                  "src": "postman-cloud:///1f0fc307-5993-4510-bfbf-8fcde5c19c45",
+                  "disabled": true
+                },
+                {
+                  "key": "password",
+                  "value": "123456789=!",
+                  "type": "text",
+                  "uuid": "fdabe37f-9eaf-4765-ab96-92cec880ae44",
+                  "disabled": true
+                },
+                {
+                  "key": "passwordNew",
+                  "value": "123123123",
+                  "type": "text",
+                  "uuid": "e12a590c-595e-4fd3-8e2a-5fd693c5b117",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C85"
+          },
+          "response": []
+        },
+        {
+          "name": "Update User Info - Invalid Email Format",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "username",
+                  "value": "UpdatedUsername",
+                  "type": "text",
+                  "uuid": "e1baf497-8f53-4b02-ae8b-c71fbcc5d1bd",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "updated@UserEmail@gmail.com",
+                  "type": "text",
+                  "uuid": "fd59cd03-af48-49f0-8833-ccf7452d4dea"
+                },
+                {
+                  "key": "gender",
+                  "value": "Woman",
+                  "type": "text",
+                  "uuid": "4e053f18-79e3-4719-ad25-22bc2bf24ca0",
+                  "disabled": true
+                },
+                {
+                  "key": "dailyWaterNorm",
+                  "value": "3000",
+                  "type": "text",
+                  "uuid": "b416b415-a4b8-4262-b51e-d646e277c191",
+                  "disabled": true
+                },
+                {
+                  "key": "weight",
+                  "value": "60",
+                  "type": "text",
+                  "uuid": "d8b79f4f-878a-4495-b8a4-e02861d1d40b",
+                  "disabled": true
+                },
+                {
+                  "key": "sportTime",
+                  "value": "2",
+                  "type": "text",
+                  "uuid": "9de0fe3e-e28a-4dea-b78a-d249d64b4e7f",
+                  "disabled": true
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "uuid": "9aa4c863-19a7-47c1-9695-4fac197f5e5b",
+                  "src": "postman-cloud:///1f0fc307-5993-4510-bfbf-8fcde5c19c45",
+                  "disabled": true
+                },
+                {
+                  "key": "password",
+                  "value": "123456789=!",
+                  "type": "text",
+                  "uuid": "fdabe37f-9eaf-4765-ab96-92cec880ae44",
+                  "disabled": true
+                },
+                {
+                  "key": "passwordNew",
+                  "value": "123123123",
+                  "type": "text",
+                  "uuid": "e12a590c-595e-4fd3-8e2a-5fd693c5b117",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C84"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Password - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "",
+                  "const email = pm.globals.get(\"userEmail\");          // email існуючого юзера",
+                  "const oldPassword = pm.globals.get(\"userPassword\");",
+                  "const newPassword = pm.globals.get(\"newUserPassword\");",
+                  "const token = pm.globals.get(\"token\");",
+                  "",
+                  "pm.sendRequest({",
+                  "    url: \"https://water-tracker-backend-z2wb.onrender.com/api/users/signin\",",
+                  "    method: \"POST\",",
+                  "    header: {",
+                  "        \"Content-Type\": \"application/json\"",
+                  "    },",
+                  "    body: {",
+                  "        mode: \"raw\",",
+                  "        raw: JSON.stringify({",
+                  "            email: email,",
+                  "            password: oldPassword",
+                  "        })",
+                  "    }",
+                  "}, (err, res) => {",
+                  "",
+                  "    pm.test(\"Sign in with OLD password fails\", () => {",
+                  "        pm.expect(res.code).to.eql(401);",
+                  "    });",
+                  "",
+                  "});",
+                  "",
+                  "pm.sendRequest({",
+                  "    url: \"https://water-tracker-backend-z2wb.onrender.com/api/users/signin\",",
+                  "    method: \"POST\",",
+                  "    header: {",
+                  "        \"Content-Type\": \"application/json\"",
+                  "    },",
+                  "    body: {",
+                  "        mode: \"raw\",",
+                  "        raw: JSON.stringify({",
+                  "            email: email,",
+                  "            password: newPassword",
+                  "        })",
+                  "    }",
+                  "}, (err, res) => {",
+                  "",
+                  "    pm.test(\"Sign in with NEW password succeeds\", () => {",
+                  "        pm.expect(res.code).to.eql(200);",
+                  "    });",
+                  "",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.globals.set(\"token\", responseJson.token);",
+                  "",
+                  "    ",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "username",
+                  "value": "UpdatedUsername",
+                  "type": "text",
+                  "uuid": "e1baf497-8f53-4b02-ae8b-c71fbcc5d1bd",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "updatedUserEmail@gmail.com",
+                  "type": "text",
+                  "uuid": "fd59cd03-af48-49f0-8833-ccf7452d4dea",
+                  "disabled": true
+                },
+                {
+                  "key": "gender",
+                  "value": "Woman",
+                  "type": "text",
+                  "uuid": "4e053f18-79e3-4719-ad25-22bc2bf24ca0",
+                  "disabled": true
+                },
+                {
+                  "key": "dailyWaterNorm",
+                  "value": "3000",
+                  "type": "text",
+                  "uuid": "b416b415-a4b8-4262-b51e-d646e277c191",
+                  "disabled": true
+                },
+                {
+                  "key": "weight",
+                  "value": "60",
+                  "type": "text",
+                  "uuid": "d8b79f4f-878a-4495-b8a4-e02861d1d40b",
+                  "disabled": true
+                },
+                {
+                  "key": "sportTime",
+                  "value": "2",
+                  "type": "text",
+                  "uuid": "9de0fe3e-e28a-4dea-b78a-d249d64b4e7f",
+                  "disabled": true
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "uuid": "9aa4c863-19a7-47c1-9695-4fac197f5e5b",
+                  "src": "postman-cloud:///1f0fc307-5993-4510-bfbf-8fcde5c19c45",
+                  "disabled": true
+                },
+                {
+                  "key": "password",
+                  "value": "{{userPassword}}",
+                  "type": "text",
+                  "uuid": "fdabe37f-9eaf-4765-ab96-92cec880ae44"
+                },
+                {
+                  "key": "passwordNew",
+                  "value": "{{newUserPassword}}",
+                  "type": "text",
+                  "uuid": "e12a590c-595e-4fd3-8e2a-5fd693c5b117"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C83"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Password - Incorrect Old Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 401\", () => {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "pm.test(\"Response contains error message\", () => {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('message');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disabledSystemHeaders": {}
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "username",
+                  "value": "UpdatedUsername",
+                  "type": "text",
+                  "uuid": "e1baf497-8f53-4b02-ae8b-c71fbcc5d1bd",
+                  "disabled": true
+                },
+                {
+                  "key": "email",
+                  "value": "updatedUserEmail@gmail.com",
+                  "type": "text",
+                  "uuid": "fd59cd03-af48-49f0-8833-ccf7452d4dea",
+                  "disabled": true
+                },
+                {
+                  "key": "gender",
+                  "value": "Woman",
+                  "type": "text",
+                  "uuid": "4e053f18-79e3-4719-ad25-22bc2bf24ca0",
+                  "disabled": true
+                },
+                {
+                  "key": "dailyWaterNorm",
+                  "value": "3000",
+                  "type": "text",
+                  "uuid": "b416b415-a4b8-4262-b51e-d646e277c191",
+                  "disabled": true
+                },
+                {
+                  "key": "weight",
+                  "value": "60",
+                  "type": "text",
+                  "uuid": "d8b79f4f-878a-4495-b8a4-e02861d1d40b",
+                  "disabled": true
+                },
+                {
+                  "key": "sportTime",
+                  "value": "2",
+                  "type": "text",
+                  "uuid": "9de0fe3e-e28a-4dea-b78a-d249d64b4e7f",
+                  "disabled": true
+                },
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "uuid": "9aa4c863-19a7-47c1-9695-4fac197f5e5b",
+                  "src": "postman-cloud:///1f0fc307-5993-4510-bfbf-8fcde5c19c45",
+                  "disabled": true
+                },
+                {
+                  "key": "password",
+                  "value": "invalidPassword",
+                  "type": "text",
+                  "uuid": "fdabe37f-9eaf-4765-ab96-92cec880ae44"
+                },
+                {
+                  "key": "passwordNew",
+                  "value": "newPassword",
+                  "type": "text",
+                  "uuid": "e12a590c-595e-4fd3-8e2a-5fd693c5b117"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                ""
+              ]
+            },
+            "description": "**Test Case:** C88"
+          },
+          "response": []
+        }
+      ],
+      "description": "User profile management endpoints for getting and updating user information."
+    }
+  ]
+}
