@@ -2,15 +2,15 @@
 
 ## Summary
 
-| ID    | Name                                                     | Priority | Tags              | Requirements                                                                                                                          |
-| :---- | :------------------------------------------------------- | :------- | :---------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
-| WT-29 | Verify Theme toggle interaction speed                    | high     | Functional,Header | [FR-HEADER-002.3 Theme Toggle Interaction](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/docs/requirements-header.md)  |
-| WT-32 | Verify Theme Persistence Across Page Navigation          | high     | Functional,Header | [FR-HEADER-002.4 Theme Persistence](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/docs/requirements-header.md)         |
-| WT-34 | Theme persists across logout and subsequent return       | high     | Functional,Header | [FR-HEADER-002.4 Theme Persistence](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/docs/requirements-header.md)         |
-| WT-35 | Invalid theme value in localStorage is handled correctly | high     | Functional,Header | [FR-HEADER-002.2.2 Default Theme Selection](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/docs/requirements-header.md) |
-| WT-66 | Default theme when no saved preference                   | high     | Functional,Header | [FR-HEADER-002.2.1 Default Theme Selection](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/docs/requirements-header.md) |
-| WT-67 | Verify Theme Toggle Interaction                          | high     | Functional,Header | [FR-HEADER-002.3 Theme Toggle Interaction](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/docs/requirements-header.md)  |
-| WT-84 | Apply saved theme from localStorage                      | high     | Functional,Header | [FR-HEADER-002.2.2 Default Theme Selection](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/docs/requirements-header.md) |
+| ID    | Name                                                     | Priority | Tags              | Requirements                                                                                                                                  |
+| :---- | :------------------------------------------------------- | :------- | :---------------- | :-------------------------------------------------------------------------------------------------------------------------------------------- |
+| WT-29 | Verify Theme toggle interaction speed                    | high     | Functional,Header | [FR-HEADER-002.3 Theme Toggle Interaction](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/requirements/requirements_header.md)  |
+| WT-32 | Verify Theme Persistence Across Page Navigation          | high     | Functional,Header | [FR-HEADER-002.4 Theme Persistence](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/requirements/requirements_header.md)         |
+| WT-34 | Theme persists across logout and subsequent return       | high     | Functional,Header | [FR-HEADER-002.4 Theme Persistence](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/requirements/requirements_header.md)         |
+| WT-35 | Invalid theme value in localStorage is handled correctly | high     | Functional,Header | [FR-HEADER-002.2.2 Default Theme Selection](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/requirements/requirements_header.md) |
+| WT-66 | Default theme when no saved preference                   | high     | Functional,Header | [FR-HEADER-002.2.1 Default Theme Selection](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/requirements/requirements_header.md) |
+| WT-67 | Verify Theme Toggle Interaction                          | high     | Functional,Header | [FR-HEADER-002.3 Theme Toggle Interaction](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/requirements/requirements_header.md)  |
+| WT-84 | Apply saved theme from localStorage                      | high     | Functional,Header | [FR-HEADER-002.2.2 Default Theme Selection](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/requirements/requirements_header.md) |
 
 ## Detailed Test Case Specifications
 
@@ -18,7 +18,7 @@
 
 - **Priority:** high
 - **Tags:** Functional,Header
-- **Requirement:** [FR-HEADER-002.3 Theme Toggle Interaction](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/docs/requirements-header.md)
+- **Requirement:** [FR-HEADER-002.3 Theme Toggle Interaction](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/requirements/requirements_header.md)
 
 #### Precondition
 
@@ -38,7 +38,7 @@ Theme switches.<br>localStorage is updated with theme preference.
 
 - **Priority:** high
 - **Tags:** Functional,Header
-- **Requirement:** [FR-HEADER-002.4 Theme Persistence](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/docs/requirements-header.md)
+- **Requirement:** [FR-HEADER-002.4 Theme Persistence](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/requirements/requirements_header.md)
 
 #### Precondition:
 
@@ -58,7 +58,7 @@ Selected theme Dark persists across all page navigations.
 
 - **Priority:** high
 - **Tags:** Functional,Header
-- **Requirement:** [FR-HEADER-002.4 Theme Persistence](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/docs/requirements-header.md)
+- **Requirement:** [FR-HEADER-002.4 Theme Persistence](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/requirements/requirements_header.md)
 
 #### Precondition
 
@@ -78,7 +78,7 @@ Theme remains Dark (preference is not lost on logout).
 
 - **Priority:** high
 - **Tags:** Functional,Header
-- **Requirement:** [FR-HEADER-002.2.2 Default Theme Selection](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/docs/requirements-header.md)
+- **Requirement:** [FR-HEADER-002.2.2 Default Theme Selection](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/requirements/requirements_header.md)
 
 #### Precondition
 
@@ -100,7 +100,7 @@ Invalid theme value is present in localStorage (e.g., "", "random", 123, {}, \[]
 
 - **Priority:** high
 - **Tags:** Functional,Header
-- **Requirement:** [FR-HEADER-002.2.1 Default Theme Selection](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/docs/requirements-header.md)
+- **Requirement:** [FR-HEADER-002.2.1 Default Theme Selection](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/requirements/requirements_header.md)
 
 #### Precondition
 
@@ -120,7 +120,7 @@ Light theme is applied by default.<br>localStorage contains theme preference val
 
 - **Priority:** high
 - **Tags:** Functional,Header
-- **Requirement:** [FR-HEADER-002.3 Theme Toggle Interaction](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/docs/requirements-header.md)
+- **Requirement:** [FR-HEADER-002.3 Theme Toggle Interaction](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/requirements/requirements_header.md)
 
 #### Precondition
 
@@ -140,7 +140,7 @@ Theme switches from Dark → Light and Light → Dark.<br>localStorage is update
 
 - **Priority:** high
 - **Tags:** Functional,Header
-- **Requirement:** [FR-HEADER-002.2.2 Default Theme Selection](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/docs/requirements-header.md)
+- **Requirement:** [FR-HEADER-002.2.2 Default Theme Selection](https://github.com/NatHumeniuk/water-tracker-tests/blob/main/requirements/requirements_header.md)
 
 #### Precondition
 
