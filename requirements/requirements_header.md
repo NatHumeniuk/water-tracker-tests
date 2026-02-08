@@ -105,7 +105,7 @@ The Header shall display the Logo, Theme Toggle, UserAuth button labeled "Sign I
 
 1. The Logo, Theme Toggle, UserAuth button labeled "Sign In" are visible in the Header for unauthenticated users.
 
-![Header unauth](../images/header/header_unauth.png)
+![Header unauth](./images/header/header_unauth.png)
 
 ### 3.2 Logo Navigation (Unauthenticated)
 
@@ -163,7 +163,7 @@ The Header shall display the Logo, Theme Toggle, User Logo button when the user 
 
 1. The Logo, Theme Toggle, User Logo button are visible in the Header for authenticated users.
 
-![Header auth](../images/header/header_auth.png)
+![Header auth](./images/header/header_auth.png)
 
 ### 4.2 Logo Navigation (Authenticated)
 
@@ -294,4 +294,4 @@ The User Logo Modal shall display a Settings button labeled "Settings" and Logou
 
 1. A button labeled "Settings" and a button labeled "Log Out" are displayed in the User Logo Modal.
 
-![UserLogo Modal](../images/header/user_logo_modal.png)
+![UserLogo Modal](./images/header/user_logo_modal.png)
